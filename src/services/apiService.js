@@ -115,7 +115,7 @@ export const declineCandidate = (pendingCandidateId, electionPublicId) => {
     });
 };
 export const generateVoterIds = (numberOfVoters, electionPublicId) => {
-    return apiClient.put(
+    return apiClient.post(
         'admin/generate/export',
         null,
         {

@@ -81,6 +81,12 @@ function VoterRegistrationPage() {
                             onChange={handleChange} value={formData.voterKey}
                             className="block w-full rounded-md bg-gray-700 p-3 text-white"
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                            Voter key must be at least <span className="font-semibold">8 characters</span>,
+                            include an <span className="font-semibold">uppercase letter</span>, a
+                            <span className="font-semibold"> number</span>, and a
+                            <span className="font-semibold"> special character</span>
+                        </p>
                         <button
                             type="button"
                             onClick={() => setShowKey(!showKey)}

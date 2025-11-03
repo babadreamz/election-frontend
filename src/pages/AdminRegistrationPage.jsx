@@ -93,13 +93,19 @@ function AdminRegistrationPage() {
                             <input
                                 type={showPassword ? 'text' : 'password'}
                                 name="password"
-                                placeholder="Enter password"
+                                placeholder="Enter password e.g 123StrongPassword?"
                                 id="password"
                                 required
                                 onChange={handleChange}
                                 value={formData.password}
                                 className="block w-full rounded-md border-gray-700 bg-gray-700 p-3 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Password must be at least <span className="font-semibold">8 characters</span>,
+                                include an <span className="font-semibold">uppercase letter</span>, a
+                                <span className="font-semibold"> number</span>, and a
+                                <span className="font-semibold"> special character</span>
+                            </p>
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}

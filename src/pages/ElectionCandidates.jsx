@@ -21,7 +21,7 @@ const PendingCandidatesTable = ({ candidates, onApprove, onDecline, actioningId 
                 <thead className="bg-yellow-600 text-white">
                 <tr>
                     <th className="px-4 py-3 text-left">Name</th>
-                    <th className="px-4 py-3 text-left">Voter ID</th>
+                    <th className="px-4 py-3 text-left">Position Code</th>
                     <th className="px-4 py-3 text-left">Actions</th>
                 </tr>
                 </thead>
@@ -29,7 +29,7 @@ const PendingCandidatesTable = ({ candidates, onApprove, onDecline, actioningId 
                 {candidates.map((candidate) => (
                     <tr key={candidate.pendingCandidateId} className="border-b hover:bg-gray-50">
                         <td className="px-4 py-3">{`${candidate.firstName} ${candidate.lastName}`}</td>
-                        <td className="px-4 py-3">{candidate.voterId}</td>
+                        <td className="px-4 py-3">{candidate.positionCode || 'N/A'}</td>
                         <td className="px-4 py-3 space-x-2">
                             <button
                                 onClick={() => onApprove(candidate.pendingCandidateId)}
@@ -101,7 +101,7 @@ function ElectionCandidates() {
     const navigate = useNavigate();
     const activeElectionId = useSelector(selectActiveElectionIdentifier);
 
-     const fetchPendingCandidates = useCallback(async (electionIdentifier) => {
+    const fetchPendingCandidates = useCallback(async (electionIdentifier) => {
         try {
             const res = await viewPendingCandidates(electionIdentifier);
             setPendingCandidates(Array.isArray(res.data) ? res.data : []);
@@ -185,7 +185,6 @@ function ElectionCandidates() {
         } catch (e) {
             console.error('Failed to decline candidate:', e);
             setError(e.response?.data?.message || 'Failed to decline candidate.');
-            // CORRECTION: Do not refresh lists on error
         } finally {
             setActioningId(null);
         }

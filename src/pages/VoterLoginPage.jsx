@@ -102,6 +102,11 @@ function VoterLoginPage() {
                             Back to role selection
                         </Link>
                     </div>
+                    <div className="text-center text-sm text-gray-400">
+                        <Link to="/voter-register" className="font-medium text-blue-400 hover:text-blue-300">
+                           Register Here
+                        </Link>
+                    </div>
                 </form>
             </div>
         </div>
