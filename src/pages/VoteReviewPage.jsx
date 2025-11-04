@@ -13,19 +13,18 @@ function VoteReviewPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const { selectedVotes, electionDetails } = location.state || {};
+    const { selectedVotes, electionDetails, electionVoterId } = location.state || {};
 
     useEffect(() => {
-        if (!selectedVotes || !electionDetails || !voter?.id || !voter?.voterId) {
-            console.error('Missing data for review page (state, voter, or voter IDs), redirecting.');
+        if (!selectedVotes || !electionDetails || !electionVoterId || !voter?.voterId) {
+            console.error('Missing data for review page (state, voter, or electionVoterId), redirecting.');
             navigate(`/voter/election/${electionId || ''}/ballot`, { replace: true });
         }
-    }, [selectedVotes, electionDetails, voter, navigate, electionId]);
+    }, [selectedVotes, electionDetails, voter, navigate, electionId, electionVoterId]);
 
-    if (!selectedVotes || !electionDetails || !voter?.id || !voter?.voterId) {
+    if (!selectedVotes || !electionDetails || !electionVoterId || !voter?.voterId) {
         return <div className="p-6 text-center">Loading review...</div>;
     }
-
 
     const { positions = [], candidates = [], title } = electionDetails;
 
@@ -35,7 +34,7 @@ function VoteReviewPage() {
         );
         return {
             electionPublicId: electionId,
-            electionVoterId: voter.id,
+            electionVoterId: electionVoterId,
             voterId: voter.voterId,
             voteEntries,
         };
@@ -47,6 +46,7 @@ function VoteReviewPage() {
         setError('');
         const payload = getPayload();
         console.log("Casting vote with payload:", payload);
+
         if (!payload.electionVoterId || !payload.voterId) {
             setError("Could not identify voter. Please log out and log back in.");
             setIsLoading(false);
@@ -70,7 +70,6 @@ function VoteReviewPage() {
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <h2 className="mb-6 text-center text-3xl font-bold">
-                🗳️ Review Your Vote for {title}
             </h2>
 
             <div className="mx-auto max-w-lg rounded-lg border bg-white p-6 shadow-sm">
@@ -98,7 +97,7 @@ function VoteReviewPage() {
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
                     <Link
                         to={`/voter/election/${electionId}/ballot`}
-                        state={{ selectedVotes, electionDetails }}
+                        state={{ selectedVotes, electionDetails, electionVoterId }}
                         className={`w-full rounded-lg bg-gray-500 px-6 py-3 text-center font-semibold text-white shadow-md hover:bg-gray-600 sm:w-auto ${isLoading ? 'pointer-events-none opacity-50' : ''}`}
                         aria-disabled={isLoading}
                     >
@@ -116,5 +115,4 @@ function VoteReviewPage() {
         </div>
     );
 }
-
 export default VoteReviewPage;

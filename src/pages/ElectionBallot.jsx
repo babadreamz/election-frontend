@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { getVoterElectionDetails } from '../services/apiService';
+import { getVoterElectionDetails, getMyParticipation } from '../services/apiService';
 
 function ElectionBallot() {
     const navigate = useNavigate();
@@ -10,6 +10,8 @@ function ElectionBallot() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [selectedVotes, setSelectedVotes] = useState({});
+
+    const [electionVoterId, setElectionVoterId] = useState(null);
 
     useEffect(() => {
         if (!electionId) {
@@ -21,16 +23,20 @@ function ElectionBallot() {
             setIsLoading(true);
             setError('');
             try {
-                const res = await getVoterElectionDetails(electionId);
-                setElectionDetails(res.data);
+                const detailsRes = await getVoterElectionDetails(electionId);
+                setElectionDetails(detailsRes.data);
+
+                const participationRes = await getMyParticipation(electionId);
+
+                setElectionVoterId(participationRes.data.id);
             } catch (e) {
                 console.error("Failed to load ballot:", e);
-                setError('Failed to load ballot details.');
+                setError('Failed to load ballot details. Have you participated in this election?');
             } finally {
                 setIsLoading(false);
             }
         };
-        fetchDetails();
+        void fetchDetails();
     }, [electionId, navigate]);
 
     const { positions = [], candidates = [], title = 'Ballot', status } = electionDetails || {};
@@ -43,39 +49,25 @@ function ElectionBallot() {
         return Array.isArray(positions) && positions.length > 0 && Object.keys(selectedVotes).length === positions.length;
     }, [selectedVotes, positions]);
 
+
     const handleSubmitSelection = () => {
-        if (!allPositionsVoted) return;
+        if (!allPositionsVoted || !electionVoterId) return; // Guard against missing ID
+
         navigate(`/voter/election/${electionId}/review`, {
             state: {
                 selectedVotes,
                 electionDetails,
+                electionVoterId: electionVoterId
             },
         });
     };
 
     if (isLoading) return <div className="p-6 text-center">Loading Ballot...</div>;
-    if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
-    if (!electionDetails) return <div className="p-6 text-center">Could not load election ballot.</div>;
-
-    if (status !== 'ONGOING') {
-        return (
-            <div className="p-6 text-center text-orange-600">
-                This election is currently {status}. Voting is only allowed during ONGOING elections.
-                <div className="mt-4">
-                    <Link to="/voter-dashboard" className="text-blue-600 hover:underline">
-                        Back to Dashboard
-                    </Link>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <h2 className="mb-6 text-center text-3xl font-bold">
                 🗳️ {title} Ballot
             </h2>
-
             <div className="space-y-8">
                 {Array.isArray(positions) && positions.map((position) => {
                     const candidatesForPosition = Array.isArray(candidates) ? candidates.filter(
@@ -127,7 +119,7 @@ function ElectionBallot() {
                             ? 'bg-blue-600 hover:bg-blue-700'
                             : 'cursor-not-allowed bg-gray-400'
                     }`}
-                    disabled={!allPositionsVoted}
+                    disabled={!allPositionsVoted || !electionVoterId}
                 >
                     {allPositionsVoted ? 'Submit Selections for Review' : 'Complete All Selections'}
                 </button>
@@ -145,3 +137,4 @@ function ElectionBallot() {
 }
 
 export default ElectionBallot;
+

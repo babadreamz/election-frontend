@@ -164,6 +164,11 @@ export const participateInElection = (electionPublicId, membershipId) => {
         params: { electionPublicId, membershipId },
     });
 };
+export const getMyParticipation = (electionPublicId) => {
+    return apiClient.get('voter/my-participation', {
+        params: { electionPublicId },
+    });
+};
 export const castVote = (votePayload) => {
     return apiClient.post('voter/vote', votePayload);
 };

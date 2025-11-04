@@ -29,7 +29,7 @@ const PendingCandidatesTable = ({ candidates, onApprove, onDecline, actioningId 
                 {candidates.map((candidate) => (
                     <tr key={candidate.pendingCandidateId} className="border-b hover:bg-gray-50">
                         <td className="px-4 py-3">{`${candidate.firstName} ${candidate.lastName}`}</td>
-                        <td className="px-4 py-3">{candidate.positionCode || 'N/A'}</td>
+                        <td className="px-4 py-3">{candidate.pendingCandidate?.positionCode || 'N/A'}</td>
                         <td className="px-4 py-3 space-x-2">
                             <button
                                 onClick={() => onApprove(candidate.pendingCandidateId)}
