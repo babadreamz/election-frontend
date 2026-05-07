@@ -16,5 +16,5 @@ COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
 ENV BACKEND_URL=http://localhost:8080
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "-c", "/docker-entrypoint.sh && cat /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
 CMD ["nginx", "-g", "daemon off;"]
