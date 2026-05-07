@@ -1,4 +1,3 @@
-# --- Stage 1: Build the React App ---
 FROM node:20 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -14,7 +13,6 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
-ENV BACKEND_URL=http://localhost:8080
+ENV BACKEND_URL=https://ems-backend-kss2.onrender.com
 
-ENTRYPOINT ["/bin/sh", "-c", "/docker-entrypoint.sh && cat /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/sh", "-c", "envsubst '${BACKEND_URL}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && cat /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
