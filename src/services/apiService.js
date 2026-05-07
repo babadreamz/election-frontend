@@ -2,7 +2,7 @@ import axios from 'axios';
 import { store } from '../app/store';
 
 export const apiClient = axios.create({
-    baseURL: '/election/',
+    baseURL: `${import.meta.env.VITE_API_URL}/election/`,
 });
 apiClient.interceptors.request.use(
     (config) => {
